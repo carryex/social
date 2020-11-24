@@ -6,39 +6,31 @@ import {
   setTotalUsersCount,
   toogleIsFetching,
   setCurrentPage,
+  toogleFollowingInProgress,
+  getUsersThunkCreator,
 } from "../../redux/usersReducer";
 import { connect } from "react-redux";
-import * as axios from "axios";
 import Users from "./Users";
 import Preloader from "./../UI/Preloader/Preloader";
 import { setCurrentPageTitle } from "../../redux/navigationReducer";
+import { userAPI } from "../../api/api";
 
 class UsersContainer extends React.Component {
   componentDidMount() {
     this.props.setCurrentPageTitle(this.props.pageTitle);
-    this.props.toogleIsFetching(true);
-    axios
-      .get(
-        `https://social-network.samuraijs.com/api/1.0/users?page=${this.props.currentPage}&count=${this.props.pageSize}`
-      )
-      .then((response) => {
-        this.props.toogleIsFetching(false);
-        this.props.setUsers(response.data.items);
-        this.props.setTotalUsersCount(response.data.totalCount);
-      });
+    this.props.getUsersThunkCreator(
+      this.props.currentPage,
+      this.props.pageSize
+    );
   }
 
   onPageChanged = (pageNumber) => {
     this.props.toogleIsFetching(true);
     this.props.setCurrentPage(pageNumber);
-    axios
-      .get(
-        `https://social-network.samuraijs.com/api/1.0/users?page=${pageNumber}&count=${this.props.pageSize}`
-      )
-      .then((response) => {
-        this.props.toogleIsFetching(false);
-        this.props.setUsers(response.data.items);
-      });
+    userAPI.getUsers(pageNumber, this.props.pageSize).then((response) => {
+      this.props.toogleIsFetching(false);
+      this.props.setUsers(response.items);
+    });
   };
 
   render() {
@@ -62,6 +54,7 @@ let mapStateToProps = (state) => {
     currentPage: state.usersPage.currentPage,
     isFetching: state.usersPage.isFetching,
     pageTitle: state.usersPage.pageTitle,
+    followingInProgress: state.usersPage.followingInProgress,
   };
 };
 
@@ -73,4 +66,6 @@ export default connect(mapStateToProps, {
   toogleIsFetching,
   setCurrentPage,
   setCurrentPageTitle,
+  toogleFollowingInProgress,
+  getUsersThunkCreator,
 })(UsersContainer);

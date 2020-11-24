@@ -2,14 +2,17 @@ import React from "react";
 import { toogleIsOpen as toogleSideBarIsOpen } from "../../redux/navigationReducer";
 import { connect } from "react-redux";
 import Header from "./Header";
-import { setUserData, setAuth } from "../../redux/auth-reducer";
+import { setAuthUserData, setAuth } from "../../redux/auth-reducer";
 import { authMe } from "../../api/api";
 
 class HeaderContainer extends React.Component {
   componentDidMount() {
     authMe().then((response) => {
-      // this.props.setUserData("1276", "pokinsokha@gmail.com", "carryex");
-      // this.props.setAuth(true);
+      if (response.resultCode === 0) {
+        let { id, email, login } = response.data;
+        this.props.setAuthUserData(id, email, login);
+        this.props.setAuth(true);
+      }
     });
   }
 
@@ -33,6 +36,6 @@ let mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   toogleSideBarIsOpen,
-  setUserData,
+  setAuthUserData,
   setAuth,
 })(HeaderContainer);

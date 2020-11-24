@@ -1,9 +1,12 @@
+import { userAPI } from "../api/api";
+
 const FOLLOW = "FOLLOW";
 const UNFOLLOW = "UNFOLLOW";
 const SET_USERS = "SET_USERS";
 const SET_CURRENT_PAGE = "SET_CURRENT_PAGE";
 const SET_TOTAL_USERS_COUNT = "SET_TOTAL_USERS_COUNT";
 const TOOGLE_IS_FETCHING = "TOOGLE_IS_FETCHING";
+const TOOGLE_IS_FOLLOWING_PROGRESS = "TOOGLE_IS_FOLLOWING_PROGRESS";
 
 let initialState = {
   users: [],
@@ -12,6 +15,7 @@ let initialState = {
   currentPage: 1,
   isFetching: true,
   pageTitle: "Users",
+  followingInProgress: [],
 };
 
 const usersReducer = (state = initialState, action) => {
@@ -56,6 +60,13 @@ const usersReducer = (state = initialState, action) => {
         ...state,
         isFetching: action.isFetching,
       };
+    case TOOGLE_IS_FOLLOWING_PROGRESS:
+      return {
+        ...state,
+        followingInProgress: action.isFetching
+          ? [...state.followingInProgress, action.userId]
+          : state.followingInProgress.filter((id) => id != action.userId),
+      };
     default:
       return state;
   }
@@ -89,4 +100,21 @@ export const toogleIsFetching = (isFetching) => ({
   type: TOOGLE_IS_FETCHING,
   isFetching,
 });
+export const toogleFollowingInProgress = (isFetching, userId) => ({
+  type: TOOGLE_IS_FOLLOWING_PROGRESS,
+  isFetching,
+  userId,
+});
+
+export const getUsersThunkCreator = (currentPage, pageSize) => {
+  return (dispach) => {
+    dispach(toogleIsFetching(true));
+    userAPI.getUsers(currentPage, pageSize).then((response) => {
+      dispach(toogleIsFetching(false));
+      dispach(setUsers(response.items));
+      dispach(setTotalUsersCount(response.totalCount));
+    });
+  };
+};
+
 export default usersReducer;

@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
   const classes = useStyles();
-
   return (
     <AppBar position="static">
       <Toolbar>
@@ -43,7 +42,6 @@ const Header = (props) => {
         <Typography variant="h6" className={classes.title}>
           {props.currentPageTitle}
         </Typography>
-
         {props.isAuth ? (
           <Button component={RouterLink} to="/profile" color="inherit">
             {props.login}
