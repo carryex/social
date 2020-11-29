@@ -1,34 +1,37 @@
 import Grid from "@material-ui/core/Grid";
-import UserItem from "./UserItem/UserItem";
+import User from "./User/User";
 import React from "react";
-import Pagination from "@material-ui/lab/Pagination";
-
-export const Users = (props) => {
-  let pagesCount = Math.ceil(props.totalUsersCount / props.pageSize);
-  let pages = [];
-  for (let i = 1; i <= pagesCount; i++) {
-    pages.push(i);
-  }
+import Paginator from "../UI/Paginator/Paginator";
+export const Users = ({
+  totalUsersCount,
+  pageSize,
+  currentPage,
+  onPageChanged,
+  followingInProgress,
+  follow,
+  unfollow,
+  users,
+}) => {
   return (
     <Grid container justify="center">
       <Grid item xs={12}>
-        <Pagination
-          count={pagesCount}
-          page={props.currentPage}
-          siblingCount={1}
-          onChange={(e, page) => {
-            props.onPageChanged(page);
-          }}
+        <Paginator
+          totalUsersCount={totalUsersCount}
+          pageSize={pageSize}
+          currentPage={currentPage}
+          onPageChanged={onPageChanged}
         />
       </Grid>
       <Grid item xs={12}>
-        <UserItem
-          users={props.users}
-          followingInProgress={props.followingInProgress}
-          toogleFollowingInProgress={props.toogleFollowingInProgress}
-          follow={props.follow}
-          unfollow={props.unfollow}
-        />
+        {users.map((user) => (
+          <User
+            user={user}
+            followingInProgress={followingInProgress}
+            follow={follow}
+            unfollow={unfollow}
+            key={user.id}
+          />
+        ))}
       </Grid>
     </Grid>
   );

@@ -5,16 +5,18 @@ import Typography from "@material-ui/core/Typography";
 import { Grid } from "@material-ui/core";
 import AddPostForm from "./AddPostForm/AddPostForm";
 
-const MyPosts = (props) => {
-  let postsElements = props.postsData.map((post) => (
-    <Post
-      key={post.id}
-      id={post.id}
-      message={post.message}
-      likesCount={post.likesCount}
-      avatar={post.avatar}
-    />
-  ));
+const MyPosts = React.memo((props) => {
+  let postsElements = [...props.postsData]
+    .reverse()
+    .map((post) => (
+      <Post
+        key={post.id}
+        id={post.id}
+        message={post.message}
+        likesCount={post.likesCount}
+        avatar={post.avatar}
+      />
+    ));
 
   let addNewPost = (formData) => {
     props.addPost(formData.newPostBody);
@@ -33,6 +35,6 @@ const MyPosts = (props) => {
       </Grid>
     </Grid>
   );
-};
+});
 
 export default MyPosts;

@@ -3,40 +3,32 @@ import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import ProfileStatus from "./ProfileStatus";
+import ProfileStatusWithHooks from "./ProfileStatusWithHooks";
 
-const ProfileInfo = (props) => {
+const ProfileInfo = ({ profile, status, updateUserStatus }) => {
   return (
     <Grid container justify="center">
       <Grid item xs={12}>
         <img
-          src={
-            props.profile.photos.large != null
-              ? props.profile.photos.large
-              : userPhoto
-          }
-          alt={props.profile.fullName}
+          src={profile.photos.large != null ? profile.photos.large : userPhoto}
+          alt={profile.fullName}
         />
       </Grid>
       <Grid item xs={2}>
         <Avatar
-          alt={props.profile.fullName}
-          src={
-            props.profile.photos.small != null
-              ? props.profile.photos.small
-              : userPhoto
-          }
+          alt={profile.fullName}
+          src={profile.photos.small != null ? profile.photos.small : userPhoto}
         />
       </Grid>
 
       <Grid item xs={10}>
-        <Typography>{props.profile.fullName}</Typography>
-        <Typography color="textSecondary">{props.profile.aboutMe}</Typography>
+        <Typography>{profile.fullName}</Typography>
+        <Typography color="textSecondary">{profile.aboutMe}</Typography>
       </Grid>
       <Grid item xs={12}>
-        <ProfileStatus
-          status={props.status}
-          updateUserStatus={props.updateUserStatus}
+        <ProfileStatusWithHooks
+          status={status}
+          updateUserStatus={updateUserStatus}
         />
       </Grid>
     </Grid>

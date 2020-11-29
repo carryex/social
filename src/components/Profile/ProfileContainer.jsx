@@ -16,10 +16,13 @@ import Preloader from "../UI/Preloader/Preloader";
 
 class ProfileContainer extends React.Component {
   componentDidMount() {
-    this.props.setCurrentPageTitle(this.props.pageTitle);
-    let userId = this.props.match.params.userId;
+    const { pageTitle, authUserId } = this.props;
+    let { userId } = this.props.match.params;
+
+    this.props.setCurrentPageTitle(pageTitle);
+
     if (!userId) {
-      userId = this.props.authUserId;
+      userId = authUserId;
       if (!userId) {
         this.props.history.push("/login");
       }

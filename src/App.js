@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Route, withRouter } from "react-router-dom";
+import { BrowserRouter, Route, withRouter } from "react-router-dom";
 import Music from "./components/Music/Music";
 import News from "./components/News/News";
 import Settings from "./components/Settings/Settings";
@@ -16,10 +16,11 @@ import Toolbar from "@material-ui/core/Toolbar";
 import { Container } from "@material-ui/core";
 import Login from "./components/Login/Login";
 import { withStyles } from "@material-ui/styles";
-import { connect } from "react-redux";
+import { connect, Provider } from "react-redux";
 import { initializeApp } from "./redux/app-reducer";
 import { compose } from "redux";
 import Preloader from "./components/UI/Preloader/Preloader";
+import store from "./redux/reduxStore";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -76,8 +77,19 @@ class App extends Component {
 const mapStateToProps = (state) => ({
   initialized: state.app.initialized,
 });
-export default compose(
+const AppContainer = compose(
   withStyles(useStyles),
   connect(mapStateToProps, { initializeApp }),
   withRouter
 )(App);
+
+const SocialReactApp = (props) => {
+  return (
+    <BrowserRouter>
+      <Provider store={store}>
+        <AppContainer />
+      </Provider>
+    </BrowserRouter>
+  );
+};
+export default SocialReactApp;

@@ -3,6 +3,7 @@ import { profileAPI } from "../api/api";
 const ADD_POST = "ADD_POST";
 const SET_USER_PROFILE = "SET_USER_PROFILE";
 const SET_USER_STATUS = "SET_USER_STATUS";
+const DELETE_POST = "DELETE_POST";
 
 let initialState = {
   postsData: [
@@ -58,6 +59,11 @@ const profileReducer = (state = initialState, action) => {
         ...state,
         status: action.status,
       };
+    case DELETE_POST:
+      return {
+        ...state,
+        postsData: state.postsData.filter((p) => p.id !== action.postId),
+      };
     default:
       return state;
   }
@@ -65,6 +71,7 @@ const profileReducer = (state = initialState, action) => {
 export default profileReducer;
 //Actions Creators
 export const addPost = (text) => ({ type: ADD_POST, text });
+export const deletePost = (postId) => ({ type: DELETE_POST, postId });
 
 export const setUserProfile = (profile) => ({
   type: SET_USER_PROFILE,
@@ -77,27 +84,19 @@ export const setUserStatus = (status) => ({
 });
 
 //thunks
-export const getUserProfile = (userId) => {
-  return (dispach) => {
-    profileAPI.getProfile(userId).then((response) => {
-      dispach(setUserProfile(response));
-    });
-  };
-};
-export const getUserStatus = (userId) => {
-  return (dispach) => {
-    profileAPI.getStatus(userId).then((response) => {
-      dispach(setUserStatus(response));
-    });
-  };
+export const getUserProfile = (userId) => async (dispach) => {
+  let response = await profileAPI.getProfile(userId);
+  dispach(setUserProfile(response));
 };
 
-export const updateUserStatus = (status) => {
-  return (dispach) => {
-    profileAPI.updateStatus(status).then((response) => {
-      if (response.data.resultCode === 0) {
-        dispach(setUserStatus(status));
-      }
-    });
-  };
+export const getUserStatus = (userId) => async (dispach) => {
+  let response = await profileAPI.getStatus(userId);
+  dispach(setUserStatus(response));
+};
+
+export const updateUserStatus = (status) => async (dispach) => {
+  let response = await profileAPI.updateStatus(status);
+  if (response.data.resultCode === 0) {
+    dispach(setUserStatus(status));
+  }
 };
