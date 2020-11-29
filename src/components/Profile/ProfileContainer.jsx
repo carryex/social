@@ -1,24 +1,37 @@
 import React from "react";
 import Profile from "./Profile";
 import { connect } from "react-redux";
-import { setUserProfile } from "../../redux/profileReducer";
+import {
+  getUserProfile,
+  getUserStatus,
+  updateUserStatus,
+} from "../../redux/profileReducer";
 import { withRouter } from "react-router-dom";
 import { setCurrentPageTitle } from "../../redux/navigationReducer";
-import { getProfile } from "../../api/api";
+
+import { compose } from "redux";
+import { getAuthUserData } from "../../redux/auth-reducer";
+
+import Preloader from "../UI/Preloader/Preloader";
 
 class ProfileContainer extends React.Component {
   componentDidMount() {
     this.props.setCurrentPageTitle(this.props.pageTitle);
     let userId = this.props.match.params.userId;
     if (!userId) {
-      userId = 2;
+      userId = this.props.authUserId;
+      if (!userId) {
+        this.props.history.push("/login");
+      }
     }
-    getProfile(userId).then((response) => {
-      this.props.setUserProfile(response);
-    });
+    this.props.getUserProfile(userId);
+    this.props.getUserStatus(userId);
   }
 
   render() {
+    if (!this.props.profile) {
+      return <Preloader />;
+    }
     return <Profile {...this.props} />;
   }
 }
@@ -27,12 +40,18 @@ let mapStateToProps = (state) => {
   return {
     profile: state.profilePage.profile,
     pageTitle: state.profilePage.pageTitle,
+    status: state.profilePage.status,
+    authUserId: state.auth.userId,
   };
 };
 
-let WithUrlDataContainerComponent = withRouter(ProfileContainer);
-
-export default connect(mapStateToProps, {
-  setUserProfile,
-  setCurrentPageTitle,
-})(WithUrlDataContainerComponent);
+export default compose(
+  connect(mapStateToProps, {
+    setCurrentPageTitle,
+    getUserProfile,
+    getUserStatus,
+    updateUserStatus,
+    getAuthUserData,
+  }),
+  withRouter
+)(ProfileContainer);

@@ -1,6 +1,8 @@
-const ADD_POST = "ADD-POST";
-const UPDATE_NEW_POST_TEXT = "UPDATE-NEW-POST-TEXT";
+import { profileAPI } from "../api/api";
+
+const ADD_POST = "ADD_POST";
 const SET_USER_PROFILE = "SET_USER_PROFILE";
+const SET_USER_STATUS = "SET_USER_STATUS";
 
 let initialState = {
   postsData: [
@@ -26,9 +28,9 @@ let initialState = {
         "https://avataaars.io/?avatarStyle=Transparent&topType=WinterHat2&accessoriesType=Wayfarers&hatColor=Blue01&hairColor=Platinum&facialHairType=BeardMagestic&facialHairColor=Black&clotheType=Overall&clotheColor=Heather&graphicType=Bear&eyeType=Wink&eyebrowType=DefaultNatural&mouthType=Eating&skinColor=Yellow",
     },
   ],
-  newPostText: "it-kamasutra.com",
   profile: null,
   pageTitle: "Profile",
+  status: "",
 };
 
 const profileReducer = (state = initialState, action) => {
@@ -36,7 +38,7 @@ const profileReducer = (state = initialState, action) => {
     case ADD_POST:
       let newPost = {
         id: Math.floor(Math.random() * 100) + 1,
-        message: state.newPostText,
+        message: action.text,
         likesCount: Math.floor(Math.random() * 100) + 1,
         avatar:
           "https://avataaars.io/?avatarStyle=Transparent&topType=NoHair&accessoriesType=Prescription02&facialHairType=Blank&clotheType=BlazerSweater&eyeType=Close&eyebrowType=FlatNatural&mouthType=Twinkle&skinColor=Yellow",
@@ -44,33 +46,58 @@ const profileReducer = (state = initialState, action) => {
       return {
         ...state,
         postsData: [...state.postsData, newPost],
-        newPostText: "",
       };
-    case UPDATE_NEW_POST_TEXT:
-      return {
-        ...state,
-        newPostText: action.newText,
-      };
+
     case SET_USER_PROFILE:
       return {
         ...state,
         profile: action.profile,
+      };
+    case SET_USER_STATUS:
+      return {
+        ...state,
+        status: action.status,
       };
     default:
       return state;
   }
 };
 export default profileReducer;
-
-// Actions Creators
-export const addPost = () => ({ type: ADD_POST });
-
-export const updateNewPostText = (text) => ({
-  type: UPDATE_NEW_POST_TEXT,
-  newText: text,
-});
+//Actions Creators
+export const addPost = (text) => ({ type: ADD_POST, text });
 
 export const setUserProfile = (profile) => ({
   type: SET_USER_PROFILE,
   profile,
 });
+
+export const setUserStatus = (status) => ({
+  type: SET_USER_STATUS,
+  status,
+});
+
+//thunks
+export const getUserProfile = (userId) => {
+  return (dispach) => {
+    profileAPI.getProfile(userId).then((response) => {
+      dispach(setUserProfile(response));
+    });
+  };
+};
+export const getUserStatus = (userId) => {
+  return (dispach) => {
+    profileAPI.getStatus(userId).then((response) => {
+      dispach(setUserStatus(response));
+    });
+  };
+};
+
+export const updateUserStatus = (status) => {
+  return (dispach) => {
+    profileAPI.updateStatus(status).then((response) => {
+      if (response.data.resultCode === 0) {
+        dispach(setUserStatus(status));
+      }
+    });
+  };
+};

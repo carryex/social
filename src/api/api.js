@@ -8,10 +8,6 @@ const instance = axios.create({
   },
 });
 
-export const authMe = () => {
-  return instance.get("auth/me").then((response) => response.data);
-};
-
 export const signIn = (email, password) => {
   return instance
     .post("auth/login", {
@@ -21,10 +17,6 @@ export const signIn = (email, password) => {
     .then((response) => {
       console.log(response);
     });
-};
-
-export const getProfile = (userId) => {
-  return instance.get(`profile/` + userId).then((response) => response.data);
 };
 
 export const userAPI = {
@@ -43,5 +35,44 @@ export const userAPI = {
     return instance
       .delete(`follow/${userId}`)
       .then((response) => response.data);
+  },
+  authMe() {
+    console.warn("Obsolete method. Please use authAPI object.");
+    return authAPI.me();
+  },
+  getProfile(userId) {
+    console.warn("Obsolete method. Please use profileAPI object.");
+    return profileAPI.getProfile(userId);
+  },
+};
+export const profileAPI = {
+  getProfile(userId) {
+    return instance.get(`profile/` + userId).then((response) => response.data);
+  },
+  getStatus(userId) {
+    return instance
+      .get(`profile/status/` + userId)
+      .then((response) => response.data);
+  },
+  updateStatus(status) {
+    return instance.put(`profile/status/`, { status: status });
+  },
+};
+
+export const authAPI = {
+  me() {
+    return instance.get("auth/me").then((response) => response.data);
+  },
+  login(email, password, rememberMe = false) {
+    return instance
+      .post("/auth/login", {
+        email,
+        password,
+        rememberMe,
+      })
+      .then((response) => response.data);
+  },
+  logout(email, password, rememberMe = false) {
+    return instance.delete("/auth/login").then((response) => response.data);
   },
 };

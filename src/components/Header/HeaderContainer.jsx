@@ -2,19 +2,8 @@ import React from "react";
 import { toogleIsOpen as toogleSideBarIsOpen } from "../../redux/navigationReducer";
 import { connect } from "react-redux";
 import Header from "./Header";
-import { setAuthUserData, setAuth } from "../../redux/auth-reducer";
-import { authMe } from "../../api/api";
-
+import { logout } from "../../redux/auth-reducer";
 class HeaderContainer extends React.Component {
-  componentDidMount() {
-    authMe().then((response) => {
-      if (response.resultCode === 0) {
-        let { id, email, login } = response.data;
-        this.props.setAuthUserData(id, email, login);
-        this.props.setAuth(true);
-      }
-    });
-  }
 
   onMenuChanged = (sideBarIsOpen) => {
     this.props.toogleSideBarIsOpen(!sideBarIsOpen);
@@ -36,6 +25,5 @@ let mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
   toogleSideBarIsOpen,
-  setAuthUserData,
-  setAuth,
+  logout,
 })(HeaderContainer);

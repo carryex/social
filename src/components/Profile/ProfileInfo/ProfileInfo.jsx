@@ -1,32 +1,45 @@
-import s from "./ProfileInfo.module.css";
-import Preloader from "../../UI/Preloader/Preloader";
 import userPhoto from "../../../assets/images/avataaars.png";
-import styles from "../../Users/Users.module.css";
+import React from "react";
+import Avatar from "@material-ui/core/Avatar";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import ProfileStatus from "./ProfileStatus";
 
 const ProfileInfo = (props) => {
-  if (!props.profile) {
-    return <Preloader />;
-  }
   return (
-    <div>
-      <div>
-        <img src="https://picsum.photos/800/200" alt="profile info" />
-      </div>
-
-      <div className={s.descriptionBlock}>
+    <Grid container justify="center">
+      <Grid item xs={12}>
         <img
           src={
             props.profile.photos.large != null
               ? props.profile.photos.large
               : userPhoto
           }
-          alt="Users avatar"
-          className={styles.avatar}
+          alt={props.profile.fullName}
         />
-        {/*<img src={props.profile.photos.large} alt="Profile" />*/}
-        <span>{props.profile.fullName}</span>
-      </div>
-    </div>
+      </Grid>
+      <Grid item xs={2}>
+        <Avatar
+          alt={props.profile.fullName}
+          src={
+            props.profile.photos.small != null
+              ? props.profile.photos.small
+              : userPhoto
+          }
+        />
+      </Grid>
+
+      <Grid item xs={10}>
+        <Typography>{props.profile.fullName}</Typography>
+        <Typography color="textSecondary">{props.profile.aboutMe}</Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <ProfileStatus
+          status={props.status}
+          updateUserStatus={props.updateUserStatus}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

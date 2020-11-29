@@ -1,5 +1,4 @@
-const ADD_MESSAGE = "ADD-MESSAGE";
-const UPDATE_NEW_MESSAGE_TEXT = "UPDATE-NEW-MESSAGE-TEXT";
+const SEND_MESSAGE = "SEND_MESSAGE";
 
 let initialState = {
   messagesData: [
@@ -39,27 +38,16 @@ let initialState = {
         "https://avataaars.io/?avatarStyle=Transparent&topType=LongHairBigHair&accessoriesType=Round&hairColor=Black&facialHairType=BeardMedium&facialHairColor=BrownDark&clotheType=BlazerShirt&clotheColor=Pink&eyeType=Side&eyebrowType=RaisedExcitedNatural&mouthType=Default&skinColor=Black",
     },
   ],
-  newMessageText: "введи сообщение",
   pageTitle: "Dialogs",
 };
 
 const dialogReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_MESSAGE:
-      let newMessage = {
-        id: Math.floor(Math.random() * 100) + 1,
-        message: state.newMessageText,
-      };
+    case SEND_MESSAGE:
+      let body = action.newMessageBody;
       return {
         ...state,
-        messagesData: [...state.messagesData, newMessage],
-        newMessageText: "",
-      };
-
-    case UPDATE_NEW_MESSAGE_TEXT:
-      return {
-        ...state,
-        newMessageText: action.newText,
+        messagesData: [...state.messagesData, { id: 6, message: body }],
       };
     default:
       return state;
@@ -68,11 +56,7 @@ const dialogReducer = (state = initialState, action) => {
 export default dialogReducer;
 
 // Actions Creators
-export const addMessageActionCreater = () => ({
-  type: ADD_MESSAGE,
-});
-
-export const updateNewMessageText = (text) => ({
-  type: UPDATE_NEW_MESSAGE_TEXT,
-  newText: text,
+export const sendMessage = (newMessageBody) => ({
+  type: SEND_MESSAGE,
+  newMessageBody,
 });

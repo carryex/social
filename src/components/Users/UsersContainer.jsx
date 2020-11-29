@@ -2,46 +2,37 @@ import React from "react";
 import {
   follow,
   unfollow,
-  setUsers,
-  setTotalUsersCount,
-  toogleIsFetching,
   setCurrentPage,
-  toogleFollowingInProgress,
-  getUsersThunkCreator,
+  getUsers,
 } from "../../redux/usersReducer";
 import { connect } from "react-redux";
 import Users from "./Users";
-import Preloader from "./../UI/Preloader/Preloader";
 import { setCurrentPageTitle } from "../../redux/navigationReducer";
-import { userAPI } from "../../api/api";
+import { withAuthRedirect } from "../../hoc/withAuthRedirect";
+import { compose } from "redux";
+
+import Preloader from "../UI/Preloader/Preloader";
 
 class UsersContainer extends React.Component {
   componentDidMount() {
     this.props.setCurrentPageTitle(this.props.pageTitle);
-    this.props.getUsersThunkCreator(
-      this.props.currentPage,
-      this.props.pageSize
-    );
+    this.props.getUsers(this.props.currentPage, this.props.pageSize);
   }
 
   onPageChanged = (pageNumber) => {
-    this.props.toogleIsFetching(true);
+    this.props.getUsers(pageNumber, this.props.pageSize);
     this.props.setCurrentPage(pageNumber);
-    userAPI.getUsers(pageNumber, this.props.pageSize).then((response) => {
-      this.props.toogleIsFetching(false);
-      this.props.setUsers(response.items);
-    });
   };
 
   render() {
     return (
-      <>
+      <React.Fragment>
         {this.props.isFetching ? (
           <Preloader />
         ) : (
           <Users {...this.props} onPageChanged={this.onPageChanged} />
         )}
-      </>
+      </React.Fragment>
     );
   }
 }
@@ -58,14 +49,13 @@ let mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  follow,
-  unfollow,
-  setUsers,
-  setTotalUsersCount,
-  toogleIsFetching,
-  setCurrentPage,
-  setCurrentPageTitle,
-  toogleFollowingInProgress,
-  getUsersThunkCreator,
-})(UsersContainer);
+export default compose(
+  connect(mapStateToProps, {
+    follow,
+    unfollow,
+    setCurrentPage,
+    setCurrentPageTitle,
+    getUsers,
+  }),
+  withAuthRedirect
+)(UsersContainer);

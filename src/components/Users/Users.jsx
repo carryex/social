@@ -1,7 +1,8 @@
-import styles from "./Users.module.css";
-import userPhoto from "./../../assets/images/avataaars.png";
-import { NavLink } from "react-router-dom";
-import { userAPI } from "../../api/api";
+import Grid from "@material-ui/core/Grid";
+import UserItem from "./UserItem/UserItem";
+import React from "react";
+import Pagination from "@material-ui/lab/Pagination";
+
 export const Users = (props) => {
   let pagesCount = Math.ceil(props.totalUsersCount / props.pageSize);
   let pages = [];
@@ -9,79 +10,27 @@ export const Users = (props) => {
     pages.push(i);
   }
   return (
-    <div>
-      <div className={styles.pagination}>
-        {pages.map((p) => (
-          <span
-            key={p}
-            className={props.currentPage === p ? styles.active : null}
-            onClick={() => {
-              props.onPageChanged(p);
-            }}
-          >
-            {p}
-          </span>
-        ))}
-      </div>
-      {props.users.map((u) => (
-        <div key={u.id}>
-          <span>
-            <div>
-              <NavLink to={"profile/" + u.id}>
-                <img
-                  src={u.photos.small != null ? u.photos.small : userPhoto}
-                  alt="Users avatar"
-                  className={styles.avatar}
-                />
-              </NavLink>
-            </div>
-            <div>
-              {u.followed ? (
-                <button
-                  disabled={props.followingInProgress.some((id) => id === u.id)}
-                  onClick={() => {
-                    props.toogleFollowingInProgress(true, u.id);
-                    userAPI.unfollow(u.id).then((response) => {
-                      if (response.resultCode == 0) {
-                        props.unfollow(u.id);
-                      }
-                      props.toogleFollowingInProgress(false, u.id);
-                    });
-                  }}
-                >
-                  Unfollow
-                </button>
-              ) : (
-                <button
-                  disabled={props.followingInProgress.some((id) => id === u.id)}
-                  onClick={() => {
-                    props.toogleFollowingInProgress(true, u.id);
-                    userAPI.follow(u.id).then((response) => {
-                      if (response.resultCode == 0) {
-                        props.follow(u.id);
-                      }
-                      props.toogleFollowingInProgress(false, u.id);
-                    });
-                  }}
-                >
-                  Follow
-                </button>
-              )}
-            </div>
-          </span>
-          <span>
-            <span>
-              <div>{u.name}</div>
-              <div>{u.status}</div>
-            </span>
-            <span>
-              {/* <div>{u.location.country}</div> */}
-              {/* <div>{u.location.city}</div> */}
-            </span>
-          </span>
-        </div>
-      ))}
-    </div>
+    <Grid container justify="center">
+      <Grid item xs={12}>
+        <Pagination
+          count={pagesCount}
+          page={props.currentPage}
+          siblingCount={1}
+          onChange={(e, page) => {
+            props.onPageChanged(page);
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <UserItem
+          users={props.users}
+          followingInProgress={props.followingInProgress}
+          toogleFollowingInProgress={props.toogleFollowingInProgress}
+          follow={props.follow}
+          unfollow={props.unfollow}
+        />
+      </Grid>
+    </Grid>
   );
 };
 

@@ -2,7 +2,7 @@ import s from "./Dialogs.module.css";
 import Message from "./Message/Message";
 import DialogItem from "./DialogItem/DialogItem";
 import React from "react";
-
+import AddMessageForm from "./AddMessageForm/AddMessageForm";
 const Dialogs = (props) => {
   let dialogsElements = props.dialogsData.map((dialog) => (
     <DialogItem
@@ -17,35 +17,15 @@ const Dialogs = (props) => {
     <Message key={message.id} id={message.id} message={message.message} />
   ));
 
-  let newMessageElement = React.createRef();
-
-  let onAddMessage = () => {
-    props.addMessage();
-  };
-
-  let onMessageChange = () => {
-    let text = newMessageElement.current.value;
-    props.updateNewMessageText(text);
+  let addNewMessage = (formData) => {
+    props.sendMessage(formData.newMessageBody);
   };
 
   return (
     <div className={s.dialogs}>
       <div className={s.dialogsItems}>{dialogsElements}</div>
-      <div className={s.messages}>
-        {messagesElements}
-        <div>
-          <div>
-            <textarea
-              ref={newMessageElement}
-              value={props.newMessageText}
-              onChange={onMessageChange}
-            ></textarea>
-          </div>
-          <div>
-            <button onClick={onAddMessage}>Add message</button>
-          </div>
-        </div>
-      </div>
+      <div className={s.messages}>{messagesElements}</div>
+      <AddMessageForm onSubmit={addNewMessage} />
     </div>
   );
 };
