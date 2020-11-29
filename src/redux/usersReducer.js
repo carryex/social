@@ -103,10 +103,11 @@ export const toogleFollowingInProgress = (isFetching, userId) => ({
 });
 
 //Thunks
-export const getUsers = (currentPage, pageSize) => {
+export const requestUsers = (page, pageSize) => {
   return (dispach) => {
     dispach(toogleIsFetching(true));
-    userAPI.getUsers(currentPage, pageSize).then((response) => {
+    dispach(setCurrentPage(page));
+    userAPI.getUsers(page, pageSize).then((response) => {
       dispach(toogleIsFetching(false));
       dispach(setUsers(response.items));
       dispach(setTotalUsersCount(response.totalCount));

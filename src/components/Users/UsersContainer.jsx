@@ -3,7 +3,7 @@ import {
   follow,
   unfollow,
   setCurrentPage,
-  getUsers,
+  requestUsers,
 } from "../../redux/usersReducer";
 import { connect } from "react-redux";
 import Users from "./Users";
@@ -12,6 +12,15 @@ import { withAuthRedirect } from "../../hoc/withAuthRedirect";
 import { compose } from "redux";
 
 import Preloader from "../UI/Preloader/Preloader";
+import {
+  getCurrentPage,
+  getFollowingInProgress,
+  getIsFetching,
+  getPageSize,
+  getPageTitle,
+  getTotalUsersCount,
+  getUsers,
+} from "../../redux/users-selectors";
 
 class UsersContainer extends React.Component {
   componentDidMount() {
@@ -21,7 +30,7 @@ class UsersContainer extends React.Component {
 
   onPageChanged = (pageNumber) => {
     this.props.getUsers(pageNumber, this.props.pageSize);
-    this.props.setCurrentPage(pageNumber);
+    // this.props.setCurrentPage(pageNumber);
   };
 
   render() {
@@ -37,15 +46,26 @@ class UsersContainer extends React.Component {
   }
 }
 
+// let mapStateToProps = (state) => {
+//   return {
+//     users: state.usersPage.users,
+//     pageSize: state.usersPage.pageSize,
+//     totalUsersCount: state.usersPage.totalUsersCount,
+//     currentPage: state.usersPage.currentPage,
+//     isFetching: state.usersPage.isFetching,
+//     pageTitle: state.usersPage.pageTitle,
+//     followingInProgress: state.usersPage.followingInProgress,
+//   };
+// };
 let mapStateToProps = (state) => {
   return {
-    users: state.usersPage.users,
-    pageSize: state.usersPage.pageSize,
-    totalUsersCount: state.usersPage.totalUsersCount,
-    currentPage: state.usersPage.currentPage,
-    isFetching: state.usersPage.isFetching,
-    pageTitle: state.usersPage.pageTitle,
-    followingInProgress: state.usersPage.followingInProgress,
+    users: getUsers(state),
+    pageSize: getPageSize(state),
+    totalUsersCount: getTotalUsersCount(state),
+    currentPage: getCurrentPage(state),
+    isFetching: getIsFetching(state),
+    pageTitle: getPageTitle(state),
+    followingInProgress: getFollowingInProgress(state),
   };
 };
 
@@ -55,7 +75,7 @@ export default compose(
     unfollow,
     setCurrentPage,
     setCurrentPageTitle,
-    getUsers,
+    getUsers: requestUsers,
   }),
   withAuthRedirect
 )(UsersContainer);
