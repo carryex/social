@@ -3,12 +3,11 @@ import { toogleIsOpen as toogleSideBarIsOpen } from "../../redux/navigationReduc
 import { connect } from "react-redux";
 import Header from "./Header";
 import { logout } from "../../redux/auth-reducer";
-class HeaderContainer extends React.Component {
 
+class HeaderContainer extends React.Component {
   onMenuChanged = (sideBarIsOpen) => {
     this.props.toogleSideBarIsOpen(!sideBarIsOpen);
   };
-
   render() {
     return <Header {...this.props} onMenuChanged={this.onMenuChanged} />;
   }
