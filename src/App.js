@@ -4,9 +4,12 @@ import { BrowserRouter, Route, withRouter } from "react-router-dom";
 import Music from "./components/Music/Music";
 import News from "./components/News/News";
 import Settings from "./components/Settings/Settings";
-import DialogsContainer from "./components/Dialogs/DialogsContainer";
+
+// import DialogsContainer from "./components/Dialogs/DialogsContainer";
+
 import UsersContainer from "./components/Users/UsersContainer";
-import ProfileContainer from "./components/Profile/ProfileContainer";
+// import ProfileContainer from "./components/Profile/ProfileContainer";
+
 import HeaderContainer from "./components/Header/HeaderContainer";
 import SideBarContainer from "./components/SideBar/SideBarContainer";
 import Grid from "@material-ui/core/Grid";
@@ -21,7 +24,14 @@ import { initializeApp } from "./redux/app-reducer";
 import { compose } from "redux";
 import Preloader from "./components/UI/Preloader/Preloader";
 import store from "./redux/reduxStore";
+import { withSuspense } from "./hoc/withSuspense";
 
+const ProfileContainer = React.lazy(() =>
+  import("./components/Profile/ProfileContainer")
+);
+const DialogsContainer = React.lazy(() =>
+  import("./components/Dialogs/DialogsContainer")
+);
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -36,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
 }));
-
 class App extends Component {
   componentDidMount() {
     this.props.initializeApp();
@@ -59,9 +68,9 @@ class App extends Component {
           <Grid item xs={12}>
             <Route
               path="/profile/:userId?"
-              render={() => <ProfileContainer />}
+              render={withSuspense(DialogsContainer)}
             />
-            <Route path="/dialogs" render={() => <DialogsContainer />} />
+            <Route path="/dialogs" render={withSuspense(ProfileContainer)} />
             <Route path="/users" render={() => <UsersContainer />} />
             <Route path="/news" render={() => <News />} />
             <Route path="/music" render={() => <Music />} />
